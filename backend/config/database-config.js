@@ -4,7 +4,7 @@ const mongo = process.env.mongo_url
 
 
 const connect = async () => {
-    await mongoose.connect(mongo)
+    await mongoose.connect( "mongodb://localhost/lms")
     .then(()=>{
         console.log("connected db")
             
