@@ -48,13 +48,76 @@ const register = async (req, res, next) => {
   });
 };
 
-const login = async (req, res, next)=>{
-    
+const bcrypt = require('bcrypt'); // Ensure this is imported if not already
 
-}
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find the user and include the password field
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Compare provided password with stored hash
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate token (assuming you have a method on the user schema)
+    const token = user.generateJwtToken();
+
+    // Set cookie options (make sure this is defined)
+    res.cookie('token', token, cookieOption); 
+
+    // Respond with success (you can also return user info without password if needed)
+    return res.status(200).json({ success: true, token });
+
+  } catch (error) {
+    next(new Apperror("failed to login", 400)); // Pass to error handling middleware
+  }
+};
+
+const logout = async (req, res) =>{
+res.cookie("token", "" ,{
+  secure: true,
+  maxAge:0,
+  httpOnly:true
+});
+
+ return res.status(200).json({
+  success: true,
+  message:"user logged out successfully"
+})
+};
+const getProfile = async (req, res, next) => {
+  try {
+    const userId = req.user.id; // From JWT middleware
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return next(new Apperror("User not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User details",
+      user,
+    });
+  } catch (error) {
+    return next(new Apperror("Failed to fetch user details", 500));
+  }
+};
 
 
 module.exports = {
-    register
+    register,
+    login,
+    logout,
+    getProfile
 
 } 

@@ -8,4 +8,8 @@ const errormiddleware = (err, req , res ,next)=>{
     })
 }
 
+
+const isloggedin = ()=>{
+    
+}
 module.exports = errormiddleware;
