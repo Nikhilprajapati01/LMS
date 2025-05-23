@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 // const {Schema} =  mongoose;
 const jwt = require("jsonwebtoken")
 const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 
 
 const userSchema = new mongoose.Schema({
@@ -64,7 +65,15 @@ userSchema.methods.generateJwtToken = function () {
   );
 };
 
-
+userSchema.methods.generatepasswordresettoken = function(){
+  const resetToken = crypto.randomBytes(20).toString('hax');
+  this.forgerpasswordtoken = crypto.createHash('sha256')
+  .update(resetToken)
+  .digest('hax')
+  this.forgetpasswordexpdate = Date.now() + 15 * 60 *1000;
+  return resetToken;
+};
+  
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

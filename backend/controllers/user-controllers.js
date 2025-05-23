@@ -1,6 +1,7 @@
 // import Apperror from "../utils/error-utils";
 const Apperror = require('../utils/error-utils')
 const User = require('../models/user-schema');
+const cloudnary = require('cloudinary')
 
 
 
@@ -34,6 +35,28 @@ const register = async (req, res, next) => {
 
   if (!user) {
     return next(new Apperror("User registration failed", 400));
+  }
+
+  if(!req.file){
+    try {
+      const result = await cloudnary.v2.uploader.upload(req.file.path,{
+        folder:"lms",
+        width:250,
+        height:250,
+        gravity:'face',
+        crop: 'fill'
+      });
+
+      if(result){
+        user.avatar.public_id = result.public_id;
+        user.avatar.secure_url = result.secure_url;
+
+        // remove file on local system
+        fs.rm(`uploads${req.file.filename}`)
+      }
+    } catch (error) {
+      return next(new Apperror(error || " failed", 500))
+    }
   }
 
   const token = user.generateJwtToken(); // ✅ call on instance
@@ -113,6 +136,41 @@ const getProfile = async (req, res, next) => {
   }
 };
 
+
+const forgotpassword = async (req, res, next)=>{
+  const {email} = req.body;
+  if(!email){
+    return next(new Apperror("email is require", 400))
+  }
+
+  const user = User.findOne({email})
+  if(!user){
+    return next(new Apperror("email is not register", 400))
+  }
+
+  const resettoken = await user.generatepasswordresettoken();
+
+  await user.save();
+
+  const resetpasswordurl = `&(process.env.FRONTEND_URL)/reset-password/${resettoken}`
+  try {
+    await sendEmail(email, subject,messaage);
+    res.status(200).json({
+      success: true,
+      messaage:`reset password token is send to ${email} succesfully`
+    })
+  } catch (error) {
+    user.forgotpassword = undefined;
+    user.forgetpasswordexpdate = undefined;
+     return next(new Apperror(error.message, 500))
+  }
+  
+}
+
+
+const resetpassword = ()=>{
+
+}
 
 module.exports = {
     register,
