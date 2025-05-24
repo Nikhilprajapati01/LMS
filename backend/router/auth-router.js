@@ -1,5 +1,5 @@
 
-const {register, login, getProfile, logout} = require('../controllers/user-controllers')
+const {register, login, getProfile, logout,forgotpassword,resetpassword} = require('../controllers/user-controllers')
 const express = require('express');
 const { isloggedin } = require('../middlewares/error-middleware');
 

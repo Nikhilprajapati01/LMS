@@ -2,6 +2,8 @@
 const Apperror = require('../utils/error-utils')
 const User = require('../models/user-schema');
 const cloudnary = require('cloudinary')
+const sendEmail = require('../utils/sendEmail')
+const bcrypt = require('bcrypt'); // Ensure this is imported if not already
 
 
 
@@ -71,7 +73,6 @@ const register = async (req, res, next) => {
   });
 };
 
-const bcrypt = require('bcrypt'); // Ensure this is imported if not already
 
 const login = async (req, res, next) => {
   try {
@@ -138,7 +139,7 @@ const getProfile = async (req, res, next) => {
 
 
 const forgotpassword = async (req, res, next)=>{
-  const {email} = req.body;
+  const email = req.body.email;
   if(!email){
     return next(new Apperror("email is require", 400))
   }
@@ -150,19 +151,26 @@ const forgotpassword = async (req, res, next)=>{
 
   const resettoken = await user.generatepasswordresettoken();
 
-  await user.save();
+  await user.save({validateBeforeSave:false});
 
-  const resetpasswordurl = `&(process.env.FRONTEND_URL)/reset-password/${resettoken}`
+  const resetpasswordurl = `${process.env.FRONTEND_URL}/reset-password/${resettoken}`
+
+  const messaage = `your reset password Token is: \n\n ${resetpasswordurl} \n\n if you have not requested this email then please ignore it`
   try {
-    await sendEmail(email, subject,messaage);
+    await sendEmail({
+      email:'user.email',
+      subject:'MERN AUTHENTICATION APP RESET PASSWORD',
+      messaage:`email sent to ${user.email}`
+    });
     res.status(200).json({
       success: true,
-      messaage:`reset password token is send to ${email} succesfully`
+      messaage: messaage
     })
   } catch (error) {
     user.forgotpassword = undefined;
     user.forgetpasswordexpdate = undefined;
-     return next(new Apperror(error.message, 500))
+    await user.save({validateBeforeSave: false});
+     return next(new Apperror(error.message,"not send reset passwod token", 500))
   }
   
 }
@@ -176,6 +184,8 @@ module.exports = {
     register,
     login,
     logout,
-    getProfile
+    getProfile,
+    forgotpassword,
+    resetpassword
 
 } 
