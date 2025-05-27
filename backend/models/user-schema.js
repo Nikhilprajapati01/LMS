@@ -32,8 +32,8 @@ fullname: {
     default: 'user' // default role
   },
 
-  forgerpasswordtoken: String,
-  forgetpasswordexpdate: Date,
+  forgotPasswordToken: String,
+  forgotPasswordExpire: Date,
 
 
    
@@ -65,12 +65,20 @@ userSchema.methods.generateJwtToken = function () {
   );
 };
 
-userSchema.methods.generatepasswordresettoken = function(){
-  const resetToken = crypto.randomBytes(20).toString('hax');
-  this.forgerpasswordtoken = crypto.createHash('sha256')
-  .update(resetToken)
-  .digest('hax')
-  this.forgetpasswordexpdate = Date.now() + 15 * 60 *1000;
+userSchema.methods.generatePasswordResetToken = function () {
+  // Generate a random token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  // Hash the token and store in the DB
+  this.forgotPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Set token expiration time (15 minutes from now)
+  this.forgotPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+  // Return the plain token (to send via email)
   return resetToken;
 };
   

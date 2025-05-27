@@ -1,7 +1,7 @@
-const port = process.env.port || 30000
-const connect = require('./config/database-config')
-const dotenv = require("dotenv").config()
+const connect = require('./config/database-config');
+ require("dotenv").config();
 const app = require('./app');
+const port = process.env.PORT || 30000
 
 app.listen(port ,async ()=>{
  console.log("port", `http://localhost:${port}`);
