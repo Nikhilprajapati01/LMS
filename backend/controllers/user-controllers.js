@@ -3,7 +3,7 @@ const Apperror = require('../utils/error-utils')
 const User = require('../models/user-schema');
 const cloudnary = require('cloudinary')
 const sendEmail = require('../utils/sendEmail')
-const bcrypt = require('bcrypt'); // Ensure this is imported if not already
+const bcrypt = require('bcrypt'); 
 
 
 
