@@ -1,5 +1,6 @@
 import React from 'react'
 import { assets } from "../../assets/assets";
+import SearchBar from './SearchBar';
 
 function Hero() {
   return (
@@ -25,7 +26,7 @@ function Hero() {
      <p  className='text-gray-800 md:hidden mx-auto max-w-3xl'>We bring together world-class instructors to help</p>
      <p className='text-gray-800 md:hidden mx-auto max-w-3xl '> you achieve your professional goals.</p>
 
-    
+    <SearchBar/>
    </div>
    </>
   )

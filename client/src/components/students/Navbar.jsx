@@ -1,19 +1,26 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { assets } from "../../assets/assets";
-import { Link } from "react-router-dom";
+import { Link, useNavigation } from "react-router-dom";
 import { useClerk, UserButton, UserProfile, useUser } from "@clerk/clerk-react";
+import { Appcontext } from "../../context/Appcontext";
 // import { SignedIn } from "@clerk/clerk-react";
 // import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom";
+
 function Navbar() {
 
 
   const {openSignIn} = useClerk()
   const {user} = useUser()
      const iscourcelist = location.pathname.includes('/course-List')
+
+     const navigate = useNavigate();
+     
+
   return (
     <>
       <div className={`flex w-full h-[60px]   items-center  justify-between border-b-1  to-black bg-blue-100  px-5  md:px-10 ${iscourcelist ? 'bg-white' : 'bg-cyan-100/70'}` }>
-        <div>
+        <div onClick={()=> navigate('/')}>
           <img src={assets.logo} alt="Logo"  className="w-20 lg:w-30 cursor-pointer"/>
         </div>
 
