@@ -1,15 +1,16 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 
 
 
 function Card({course}) {
-  console.log(course);
+  // const {_id} = useParams();
+  // console.log(course);
   
   return (
     <>
-    <Link to={'./Course/' + course._id} onClick={()=>(scrollTo(0,0,))} 
+    <Link to={'/Course/' + course._id} onClick={()=>(scrollTo(0,0,))} 
     className='border-1 border-gray-500/30 pb-6 overflow-hidden rounded-lg mt-15'>
     <img className='w-full' src={course.courseThumbnail} alt="" />
       <div className='p-3 text-left'>

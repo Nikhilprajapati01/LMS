@@ -15,6 +15,8 @@ function Navbar() {
      const iscourcelist = location.pathname.includes('/course-List')
 
      const navigate = useNavigate();
+
+     const iseducator = useContext(Appcontext)
      
 
   return (
@@ -28,7 +30,8 @@ function Navbar() {
         <div className="hidden md:flex items-center gap-5">
           <div className="flex gap-4 px-2">
            {  user && <>
-            <button className=" px-2.5 cursor-pointer  ">Become Educator</button>
+           
+             <button className=" px-2.5 cursor-pointer "  onClick={()=> navigate('/educator')}>{iseducator ? "Educator Dashboard" : 'Become Educator'}</button>
             | <Link>My Enrollment</Link>
            </>
             }
@@ -47,10 +50,10 @@ function Navbar() {
       {/* for mobile screen  */}
 
       <div className=" md:hidden flex items-center md:gap-7 gap-4">
-        <div className="text-[14px]">
+        <div className="text-[9px]">
            { user && <>
             
-            <button >Become Educators</button>
+           <button className=" px-2.5 cursor-pointer "  onClick={()=> navigate('/educator')}>{iseducator ? "Educator Dashboard" : 'Become Educator'}</button>
             | <Link to='/Myenrollment'>My MyEnrollment</Link>
            </> 
             }
